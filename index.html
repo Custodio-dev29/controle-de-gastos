@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e3a5f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Controle de Gastos">
+    <link rel="icon" href="icon-192.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    <title>Controle de Gastos</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="lib/jspdf.umd.min.js"></script>
+    <script src="lib/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <button class="menu-hamburger" id="menu-hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>Controle de Gastos</h1>
+        </header>
+
+        <nav class="menu-lateral" id="menu-lateral">
+            <div class="menu-overlay" id="menu-overlay"></div>
+            <div class="menu-conteudo">
+                <div class="menu-header">
+                    <h2>Menu</h2>
+                    <button class="menu-fechar" id="menu-fechar">&times;</button>
+                </div>
+                <ul class="menu-opcoes">
+                    <li class="menu-item" data-secao="adicionar">
+                        <span class="menu-icon">&#10133;</span>
+                        Lançar
+                    </li>
+                    <li class="menu-item" data-secao="historico">
+                        <span class="menu-icon">&#128196;</span>
+                        Histórico
+                    </li>
+                    <li class="menu-item" data-secao="config">
+                        <span class="menu-icon">&#9881;</span>
+                        Configurações
+                    </li>
+                    <li class="menu-item" data-secao="backup">
+                        <span class="menu-icon">&#128190;</span>
+                        Backup
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <section class="form-section secao ativa" id="secao-adicionar">
+                <div class="resumo-inline">
+                    <div class="card-mini card-receita">
+                        <span class="label">Receitas</span>
+                        <p id="total-receitas">R$ 0,00</p>
+                    </div>
+                    <div class="card-mini card-despesa">
+                        <span class="label">Despesas</span>
+                        <p id="total-despesas">R$ 0,00</p>
+                    </div>
+                    <div class="card-mini card-saldo">
+                        <span class="label">Saldo</span>
+                        <p id="saldo">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <h2>Lançar Transação</h2>
+                <form id="form-transacao">
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" id="descricao" placeholder="Ex: Salário, Almoço..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valor">Valor (R$)</label>
+                        <input type="number" id="valor" step="0.01" min="0.01" placeholder="0,00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo" required>
+                            <option value="receita">Receita</option>
+                            <option value="despesa">Despesa</option>
+                            <option value="fixa">Despesa Fixa</option>
+                            <option value="parcelada">Despesa Parcelada (Cartão)</option>
+                        </select>
+                    </div>
+
+                    <div id="campos-fixas" class="campos-dinamicos" style="display:none">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fixa-dia">Dia Vencimento</label>
+                                <input type="number" id="fixa-dia" min="1" max="31" placeholder="Dia">
+                            </div>
+                            <div class="form-group">
+                                <label for="data">Data Lançamento</label>
+                                <input type="date" id="data-fixa">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="campos-parceladas" class="campos-dinamicos" style="display:none">
+                        <div class="form-group">
+                            <label for="cartao-nome">Bandeira / Nome do Cartão</label>
+                            <input type="text" id="cartao-nome" placeholder="Ex: Nubank, Itaú...">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cartao-parc-total">Total Parcelas</label>
+                                <input type="number" id="cartao-parc-total" min="2" max="48" placeholder="12">
+                            </div>
+                            <div class="form-group">
+                                <label for="cartao-parc-atual">Parcela Atual</label>
+                                <input type="number" id="cartao-parc-atual" min="1" placeholder="1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cartao-vencimento">Dia Vencimento</label>
+                                <input type="number" id="cartao-vencimento" min="1" max="31" placeholder="Dia">
+                            </div>
+                            <div class="form-group">
+                                <label for="data-parcela">Data Lançamento</label>
+                                <input type="date" id="data-parcela">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria" required>
+                            <option value="salario">Salário</option>
+                            <option value="freelance">Freelance</option>
+                            <option value="investimentos">Investimentos</option>
+                            <option value="alimentacao">Alimentação</option>
+                            <option value="transporte">Transporte</option>
+                            <option value="moradia">Moradia</option>
+                            <option value="saude">Saúde</option>
+                            <option value="lazer">Lazer</option>
+                            <option value="educacao">Educação</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+
+                    <div id="campos-data-normal" class="form-group">
+                        <label for="data">Data</label>
+                        <input type="date" id="data" required>
+                    </div>
+
+                    <button type="submit" class="btn-adicionar">Adicionar</button>
+                </form>
+
+                <div id="lista-fixas-container" class="lista-container" style="display:none">
+                    <h3>Despesas Fixas</h3>
+                    <ul id="lista-fixas"></ul>
+                    <p id="mensagem-vazia-fixas" class="mensagem-vazia">Nenhuma despesa fixa cadastrada.</p>
+                </div>
+
+                <div id="lista-parcelas-container" class="lista-container" style="display:none">
+                    <h3>Despesas Parceladas (Cartão)</h3>
+                    <ul id="lista-cartao"></ul>
+                    <p id="mensagem-vazia-cartao" class="mensagem-vazia">Nenhuma despesa parcelada cadastrada.</p>
+
+                    <div id="perspectiva-meses" class="perspectiva-meses">
+                        <h3>Perspectiva dos Próximos Meses</h3>
+                        <div id="lista-meses" class="lista-meses"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="transacoes-section secao" id="secao-historico">
+                <div class="resumo-inline">
+                    <div class="card-mini card-receita">
+                        <span class="label">Receitas</span>
+                        <p id="total-receitas-hist">R$ 0,00</p>
+                    </div>
+                    <div class="card-mini card-despesa">
+                        <span class="label">Despesas</span>
+                        <p id="total-despesas-hist">R$ 0,00</p>
+                    </div>
+                    <div class="card-mini card-saldo">
+                        <span class="label">Saldo</span>
+                        <p id="saldo-hist">R$ 0,00</p>
+                    </div>
+                </div>
+                <h2>Histórico de Transações</h2>
+                <div class="filtros">
+                    <select id="filtro-tipo">
+                        <option value="todos">Todos</option>
+                        <option value="receita">Receitas</option>
+                        <option value="despesa">Despesas</option>
+                    </select>
+                    <select id="filtro-categoria">
+                        <option value="todas">Todas as Categorias</option>
+                        <option value="salario">Salário</option>
+                        <option value="freelance">Freelance</option>
+                        <option value="investimentos">Investimentos</option>
+                        <option value="alimentacao">Alimentação</option>
+                        <option value="transporte">Transporte</option>
+                        <option value="moradia">Moradia</option>
+                        <option value="saude">Saúde</option>
+                        <option value="lazer">Lazer</option>
+                        <option value="educacao">Educação</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <ul id="lista-transacoes"></ul>
+                <p id="mensagem-vazia" class="mensagem-vazia">Nenhuma transação registrada ainda.</p>
+            </section>
+
+            <section class="config-section secao" id="secao-config">
+                <h2>Configurações</h2>
+                <div class="config-grupo">
+                    <label class="config-label">Dia padrão de vencimento (Despesas Fixas)</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <select id="config-dia-fixas">
+                                <option value="1">Dia 1</option>
+                                <option value="5">Dia 5</option>
+                                <option value="10">Dia 10</option>
+                                <option value="15">Dia 15</option>
+                                <option value="20">Dia 20</option>
+                                <option value="25">Dia 25</option>
+                                <option value="30">Dia 30</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="config-grupo">
+                    <label class="config-label">Dia padrão de vencimento (Cartão)</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <select id="config-dia-cartao">
+                                <option value="1">Dia 1</option>
+                                <option value="5">Dia 5</option>
+                                <option value="10">Dia 10</option>
+                                <option value="15">Dia 15</option>
+                                <option value="20">Dia 20</option>
+                                <option value="25">Dia 25</option>
+                                <option value="30">Dia 30</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="config-grupo">
+                    <label class="config-label">Parcelas começam a partir do lançamento</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <select id="config-parc-inicio">
+                                <option value="atual">Parcela atual = mês do lançamento</option>
+                                <option value="manual">Definir parcela manualmente</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-adicionar" id="btn-salvar-config">Salvar Configurações</button>
+            </section>
+
+            <section class="acoes-section secao" id="secao-backup">
+                <h2>Backup e Relatórios</h2>
+                <div class="botoes-acao">
+                    <button class="btn-acao btn-exportar" onclick="app.exportarJSON()">
+                        Exportar Backup
+                    </button>
+                    <label class="btn-acao btn-importar">
+                        Importar Backup
+                        <input type="file" id="importar-arquivo" accept=".json" onchange="app.importarJSON(event)" hidden>
+                    </label>
+                    <button class="btn-acao btn-relatorio" onclick="app.gerarRelatorioPDF()">
+                        Gerar Relatório PDF
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        if (window.location.protocol !== 'file:') {
+            var linkManifest = document.createElement('link');
+            linkManifest.rel = 'manifest';
+            linkManifest.href = 'manifest.json';
+            document.head.appendChild(linkManifest);
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(reg => console.log('Service Worker registrado:', reg.scope))
+                        .catch(err => console.log('Erro ao registrar Service Worker:', err));
+                });
+            }
+        }
+    </script>
+</body>
+</html>

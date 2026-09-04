@@ -1,0 +1,516 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f6fa;
+    min-height: 100vh;
+}
+
+.app-container { min-height: 100vh; }
+
+.header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.header h1 { font-size: 1.3rem; font-weight: 600; }
+
+.menu-hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.menu-hamburger span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.menu-hamburger.ativo span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+.menu-hamburger.ativo span:nth-child(2) { opacity: 0; }
+.menu-hamburger.ativo span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+.menu-lateral {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-lateral.ativo { pointer-events: auto; opacity: 1; }
+
+.menu-overlay {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.menu-conteudo {
+    position: absolute;
+    left: 0; top: 0;
+    width: 280px; height: 100%;
+    background: white;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    overflow-y: auto;
+}
+
+.menu-lateral.ativo .menu-conteudo { transform: translateX(0); }
+
+.menu-header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-header h2 { font-size: 1.2rem; font-weight: 600; }
+
+.menu-fechar {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.menu-opcoes { list-style: none; padding: 10px 0; }
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.menu-item:hover { background: #f5f6fa; }
+
+.menu-item.ativo {
+    background: #e8f4f8;
+    border-left-color: #1e3a5f;
+    color: #1e3a5f;
+    font-weight: 600;
+}
+
+.menu-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+
+.main-content {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.secao { display: none; }
+.secao.ativa { display: block; }
+
+.resumo-inline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.card-mini {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.card-mini .label {
+    font-size: 0.65rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.card-mini p {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.card-mini.card-receita p { color: #2d6a4f; }
+.card-mini.card-despesa p { color: #c0392b; }
+.card-mini.card-saldo p { color: #1e3a5f; }
+
+.form-section,
+.transacoes-section,
+.acoes-section,
+.config-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #1e3a5f;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+h3 {
+    color: #1e3a5f;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+}
+
+.form-group { margin-bottom: 12px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 4px;
+    color: #555;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #1e3a5f;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.campos-dinamicos {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px dashed #ddd;
+    margin-bottom: 12px;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.campos-dinamicos .form-group { margin-bottom: 8px; }
+.campos-dinamicos .form-group:last-child { margin-bottom: 0; }
+
+.btn-adicionar {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 5px;
+}
+
+.btn-adicionar:hover { opacity: 0.9; }
+
+.filtros {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.filtros select {
+    flex: 1;
+    min-width: 120px;
+    padding: 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background: white;
+}
+
+.filtros select:focus { outline: none; border-color: #1e3a5f; }
+
+#lista-transacoes { list-style: none; }
+
+.transacao-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.transacao-item:last-child { border-bottom: none; }
+.transacao-info { flex: 1; }
+
+.transacao-descricao {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+    font-size: 0.95rem;
+}
+
+.transacao-detalhes { font-size: 0.8rem; color: #888; }
+
+.transacao-tipo-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-left: 6px;
+}
+
+.transacao-tipo-badge.fixa { background: #fef3cd; color: #856404; }
+.transacao-tipo-badge.parcelada { background: #e8daef; color: #6c3483; }
+
+.transacao-valor {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-right: 10px;
+}
+
+.transacao-valor.receita { color: #2d6a4f; }
+.transacao-valor.despesa { color: #c0392b; }
+.transacao-valor.fixa { color: #e67e22; }
+.transacao-valor.parcelada { color: #8e44ad; }
+
+.btn-excluir {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+    min-height: 36px;
+}
+
+.btn-excluir:hover { background: #7f8c8d; }
+
+.mensagem-vazia {
+    text-align: center;
+    color: #999;
+    padding: 25px;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.botoes-acao {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-acao {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-align: center;
+}
+
+.btn-acao:hover { opacity: 0.9; }
+.btn-exportar { background: #2d6a4f; color: white; }
+.btn-importar { background: #1e3a5f; color: white; }
+.btn-relatorio { background: #c0392b; color: white; }
+
+.lista-container { margin-top: 20px; }
+
+.despesa-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.despesa-item:last-child { border-bottom: none; }
+.despesa-info { flex: 1; }
+.despesa-nome { font-weight: 600; color: #333; font-size: 0.95rem; }
+.despesa-detalhes { font-size: 0.8rem; color: #888; margin-top: 2px; }
+
+.despesa-valor {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #c0392b;
+    margin-right: 10px;
+}
+
+.despesa-parc {
+    font-size: 0.75rem;
+    color: #8e44ad;
+    font-weight: 600;
+}
+
+.perspectiva-meses {
+    margin-top: 20px;
+    border-top: 2px solid #f0f0f0;
+    padding-top: 15px;
+}
+
+.perspectiva-meses h3 { border-top: none; padding-top: 0; margin-top: 0; }
+
+.lista-meses {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mes-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    border-left: 4px solid #1e3a5f;
+}
+
+.mes-card.mes-atual {
+    border-left-color: #c0392b;
+    background: #fef5f5;
+}
+
+.mes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.mes-nome { font-weight: 700; color: #333; font-size: 0.95rem; }
+.mes-total { font-weight: 700; font-size: 0.95rem; color: #c0392b; }
+
+.mes-itens {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mes-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+    padding: 4px 0;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.mes-item:last-child { border-bottom: none; }
+.mes-item-nome { flex: 1; }
+.mes-item-valor { font-weight: 600; color: #333; margin-left: 10px; }
+
+.mes-item-parc {
+    color: #8e44ad;
+    margin-left: 8px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.config-grupo {
+    margin-bottom: 20px;
+}
+
+.config-label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.config-valor {
+    color: #888;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+    .header h1 { font-size: 1.1rem; }
+    .main-content { padding: 15px; }
+    .resumo-inline { gap: 6px; }
+    .card-mini { padding: 8px 5px; }
+    .card-mini .label { font-size: 0.6rem; }
+    .card-mini p { font-size: 0.75rem; }
+
+    .form-section,
+    .transacoes-section,
+    .acoes-section,
+    .config-section { padding: 15px; }
+
+    .form-row { gap: 8px; }
+
+    .transacao-item,
+    .despesa-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .transacao-valor,
+    .despesa-valor { margin-right: 0; }
+
+    .btn-excluir { width: 100%; }
+
+    .mes-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .mes-item { flex-wrap: wrap; gap: 4px; }
+}
+
+@media (max-width: 400px) {
+    .card-mini p { font-size: 0.7rem; }
+}
